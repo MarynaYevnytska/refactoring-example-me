@@ -1,3 +1,3 @@
-require_relative 'account'
+require_relative 'app/account'
 
-Account.new.console
+Account.new.hello
