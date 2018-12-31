@@ -3,7 +3,7 @@ class CreditCard
     usual
     capitalist
     virtual
-  ]
+  ].freeze
 
   def initialize(type)
     case type
@@ -30,24 +30,24 @@ class CreditCard
 
           card = {
             type: 'usual',
-            number: 16.times.map{rand(10)}.join,
+            number: 16.times.map { rand(10) }.join,
             balance: 50.00
           }
         elsif ct == 'capitalist'
           card = {
             type: 'capitalist',
-            number: 16.times.map{rand(10)}.join,
+            number: 16.times.map { rand(10) }.join,
             balance: 100.00
           }
         elsif ct == 'virtual'
           card = {
             type: 'virtual',
-            number: 16.times.map{rand(10)}.join,
+            number: 16.times.map { rand(10) }.join,
             balance: 150.00
           }
         end
         cards = @current_account.card << card
-        @current_account.card = cards #important!!!
+        @current_account.card = cards # important!!!
         new_accounts = []
         accounts.each do |ac|
           if ac.login == @current_account.login
@@ -56,7 +56,7 @@ class CreditCard
             new_accounts.push(ac)
           end
         end
-        File.open(@file_path, 'w') { |f| f.write new_accounts.to_yaml } #Storing
+        File.open(@file_path, 'w') { |f| f.write new_accounts.to_yaml } # Storing
         break
       else
         puts "Wrong card type. Try again!\n"
@@ -77,6 +77,7 @@ class CreditCard
         puts "press `exit` to exit\n"
         answer = gets.chomp
         break if answer == 'exit'
+
         if answer&.to_i.to_i <= @current_account.card.length && answer&.to_i.to_i > 0
           puts "Are you sure you want to delete #{@current_account.card[answer&.to_i.to_i - 1][:number]}?[y/n]"
           a2 = gets.chomp
@@ -90,7 +91,7 @@ class CreditCard
                 new_accounts.push(ac)
               end
             end
-            File.open(@file_path, 'w') { |f| f.write new_accounts.to_yaml } #Storing
+            File.open(@file_path, 'w') { |f| f.write new_accounts.to_yaml } # Storing
             break
           else
             return
@@ -107,7 +108,7 @@ class CreditCard
 
   def withdraw_money
     puts 'Choose the card for withdrawing:'
-    answer, a2, a3 = nil #answers for gets.chomp
+    answer, a2, a3 = nil # answers for gets.chomp
     if @current_account.card.any?
       @current_account.card.each_with_index do |c, i|
         puts "- #{c[:number]}, #{c[:type]}, press #{i + 1}"
@@ -116,6 +117,7 @@ class CreditCard
       loop do
         answer = gets.chomp
         break if answer == 'exit'
+
         if answer&.to_i.to_i <= @current_account.card.length && answer&.to_i.to_i > 0
           current_card = @current_account.card[answer&.to_i.to_i - 1]
           loop do
@@ -134,7 +136,7 @@ class CreditCard
                     new_accounts.push(ac)
                   end
                 end
-                File.open(@file_path, 'w') { |f| f.write new_accounts.to_yaml } #Storing
+                File.open(@file_path, 'w') { |f| f.write new_accounts.to_yaml } # Storing
                 puts "Money #{a2&.to_i.to_i} withdrawed from #{current_card[:number]}$. Money left: #{current_card[:balance]}$. Tax: #{withdraw_tax(current_card[:type], current_card[:balance], current_card[:number], a2&.to_i.to_i)}$"
                 return
               else
@@ -167,6 +169,7 @@ class CreditCard
       loop do
         answer = gets.chomp
         break if answer == 'exit'
+
         if answer&.to_i.to_i <= @current_account.card.length && answer&.to_i.to_i > 0
           current_card = @current_account.card[answer&.to_i.to_i - 1]
           loop do
@@ -188,7 +191,7 @@ class CreditCard
                     new_accounts.push(ac)
                   end
                 end
-                File.open(@file_path, 'w') { |f| f.write new_accounts.to_yaml } #Storing
+                File.open(@file_path, 'w') { |f| f.write new_accounts.to_yaml } # Storing
                 puts "Money #{a2&.to_i.to_i} was put on #{current_card[:number]}. Balance: #{current_card[:balance]}. Tax: #{put_tax(current_card[:type], current_card[:balance], current_card[:number], a2&.to_i.to_i)}"
                 return
               end
@@ -265,16 +268,14 @@ class CreditCard
               recipient = ac
               new_recipient_cards = []
               recipient.card.each do |card|
-                if card[:number] == a2
-                  card[:balance] = recipient_balance
-                end
+                card[:balance] = recipient_balance if card[:number] == a2
                 new_recipient_cards.push(card)
               end
               recipient.card = new_recipient_cards
               new_accounts.push(recipient)
             end
           end
-          File.open('accounts.yml', 'w') { |f| f.write new_accounts.to_yaml } #Storing
+          File.open('accounts.yml', 'w') { |f| f.write new_accounts.to_yaml } # Storing
           puts "Money #{a3&.to_i.to_i}$ was put on #{sender_card[:number]}. Balance: #{recipient_balance}. Tax: #{put_tax(sender_card[:type], sender_card[:balance], sender_card[:number], a3&.to_i.to_i)}$\n"
           puts "Money #{a3&.to_i.to_i}$ was put on #{a2}. Balance: #{sender_balance}. Tax: #{sender_tax(sender_card[:type], sender_card[:balance], sender_card[:number], a3&.to_i.to_i)}$\n"
           break
@@ -287,7 +288,7 @@ class CreditCard
 
   private
 
-  def withdraw_tax(type, balance, number, amount)
+  def withdraw_tax(type, _balance, _number, amount)
     if type == 'usual'
       return amount * 0.05
     elsif type == 'capitalist'
@@ -295,10 +296,11 @@ class CreditCard
     elsif type == 'virtual'
       return amount * 0.88
     end
+
     0
   end
 
-  def put_tax(type, balance, number, amount)
+  def put_tax(type, _balance, _number, amount)
     if type == 'usual'
       return amount * 0.02
     elsif type == 'capitalist'
@@ -306,10 +308,11 @@ class CreditCard
     elsif type == 'virtual'
       return 1
     end
+
     0
   end
 
-  def sender_tax(type, balance, number, amount)
+  def sender_tax(type, _balance, _number, amount)
     if type == 'usual'
       return 20
     elsif type == 'capitalist'
@@ -317,6 +320,7 @@ class CreditCard
     elsif type == 'virtual'
       return 1
     end
+
     0
   end
 end

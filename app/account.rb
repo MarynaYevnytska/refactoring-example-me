@@ -58,16 +58,14 @@ class Account
 
   def load
     loop do
-      if !accounts.any?
-        return create_the_first_account
-      end
+      return create_the_first_account if accounts.none?
 
       puts 'Enter your login'
       login = gets.chomp
       puts 'Enter your password'
       password = gets.chomp
 
-      if accounts.map { |a| { login: a.login, password: a.password } }.include?({ login: login, password: password })
+      if accounts.map { |a| { login: a.login, password: a.password } }.include?(login: login, password: password)
         a = accounts.select { |a| login == a.login }.first
         @current_account = a
         break
@@ -104,7 +102,7 @@ class Account
   end
 
   def accounts
-    return [] unless File.exists?('accounts.yml')
+    return [] unless File.exist?('accounts.yml')
 
     YAML.load_file('accounts.yml')
   end
