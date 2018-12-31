@@ -8,18 +8,15 @@ class Console
 
   def initialize(account)
     @account = account
+    hello
   end
 
   def hello
     puts HELLO_MESSAGE
-
     command = gets.chomp
-
     case command
-    when 'create'
-      @account.create
-    when 'load'
-      @account.load
+    when 'create'then @account.create
+    when 'load' then @account.load
     else
       exit
     end
@@ -31,21 +28,15 @@ class Console
     loop do
       command = gets.chomp
       case command
-      when 'SC'
-        @account.show_cards
-      when 'CC'
-        @account.card.create
-      when 'DC'
-        @account.card.destroy
-      when 'PM'
-        @account.card.put_money
-      when 'WM'
-        @account.card.withdraw_money
-      when 'SM'
-        @account.card.send_money
+      when 'SC'then @account.show_cards
+      when 'CC'then @account.card.create
+      when 'DC'then @account.card.destroy
+      when 'PM'then @account.card.put_money
+      when 'WM'then @account.card.withdraw_money
+      when 'SM'then @account.card.send_money
       when 'DA'
-        @account.destroy
-        exit
+         @account.destroy
+         exit
       when 'exit'
         exit
       else
