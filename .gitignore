@@ -3,3 +3,7 @@ accounts.yml
 spec/fixtures/account.yml
 coverage
 .DS_Store
+app/credits_cards/base.rb
+app/credits_cards/capitalist.rb
+app/credits_cards/usual.rb
+app/credits_cards/virtual.rb

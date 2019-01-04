@@ -1,0 +1,8 @@
+en:
+
+create_card_greeting:  "You could create one of 3 card types: \n
+    - Usual card. 2% tax on card INCOME. 20$ tax on SENDING money from this card. 5% tax on WITHDRAWING money. For creation this card - press `usual`\n
+    - Capitalist card. 10$ tax on card INCOME. 10% tax on SENDING money from this card. 4$ tax on WITHDRAWING money. For creation this card - press `capitalist`\n
+    - Virtual card. 1$ tax on card INCOME. 1$ tax on SENDING money from this card. 12% tax on WITHDRAWING money. For creation this card - press `virtual`\n
+    - For exit - press `exit`\n"
+wrong_card: "Wrong card type. Try again!\n
