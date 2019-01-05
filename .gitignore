@@ -7,3 +7,5 @@ app/credits_cards/base.rb
 app/credits_cards/capitalist.rb
 app/credits_cards/usual.rb
 app/credits_cards/virtual.rb
+Refactoring.pdf
+Refactoring_methods.pdf

@@ -6,8 +6,8 @@ class Console
     - If you want to exit - press `exit`
   HELLO_MESSAGE
 
-  def initialize(account)
-    @account = account
+  def initialize
+    @account = Account.new
     hello
   end
 
@@ -16,7 +16,7 @@ class Console
     command = gets.chomp
     case command
     when 'create'then @account.create
-    when 'load' then @account.load
+    when 'load'  then @account.load
     else
       exit
     end
@@ -46,28 +46,30 @@ class Console
   end
 
   def name_input
-    puts 'Enter your name'
-    read_from_console
+    read_from_console{'Enter your name'}
   end
 
   def age_input
-    puts 'Enter your age'
-    read_from_console.to_i
+    read_from_console.to_i{'Enter your age'}
   end
 
   def login_input
     puts 'Enter your login'
-    read_from_console
+    read_from_console{'Enter your login'}
   end
 
   def password_input
-    puts 'Enter your password'
-    read_from_console
+    read_from_console{'Enter your password'}
   end
 
   private
 
+  def send_to_cosole
+    puts yield
+  end
+
   def read_from_console
+    puts yield
     gets.chomp
   end
 

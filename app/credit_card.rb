@@ -1,3 +1,5 @@
+
+CREDITE_CARD={"create_card_greeting" : 'create_card_greeting'}
 class CreditCard
   VALID_TYPES = %w[
     usual
@@ -12,81 +14,74 @@ BALANCE={ 'usual':50,'capitalist':100, 'virtual':150}.freeze
       when 'capitalist' then @card = CreditCards::Capitalist.new
       when 'virtual' then @card = CreditCards::Virtual.new
     end
+    @console=Console.new
   end
+
+def data_recording(card_type)
+  case card_type
+  when 'usual'
+    card = {type: 'usual',number: random_number,balance: BALANCE[:usual]}
+  when 'capitalist'
+    card = {type: 'capitalist',number: random_number,balance: BALANCE[:capitalist]}
+  when 'virtual'
+    card = {type: 'virtual', number: random_number, balance: BALANCE[:virtual]}
+  end
+end
+
+def new_account_exist?
+  new_accounts = []
+    accounts.each do |account|
+     if account.login == @current_account.login
+       new_accounts.push(@current_account)
+     else
+       new_accounts.push(account)
+    end
+end
 
   def create_card
     loop do
-      puts 'You could create one of 3 card types'
-      puts '- Usual card. 2% tax on card INCOME. 20$ tax on SENDING money from this card. 5% tax on WITHDRAWING money. For creation this card - press `usual`'
-      puts '- Capitalist card. 10$ tax on card INCOME. 10% tax on SENDING money from this card. 4$ tax on WITHDRAWING money. For creation this card - press `capitalist`'
-      puts '- Virtual card. 1$ tax on card INCOME. 1$ tax on SENDING money from this card. 12% tax on WITHDRAWING money. For creation this card - press `virtual`'
-      puts '- For exit - press `exit`'
-      card_type = gets.chomp
-      if card_type == 'usual' || card_type == 'capitalist' || card_type == 'virtual'
-        random_number = 16.times.map { rand(10) }.join
-        case card_type
-        when 'usual'
-          card = {type: 'usual',number: random_number,balance: BALANCE[:usual]}
-        when 'capitalist'
-          card = {type: 'capitalist',number: random_number,balance: BALANCE[:capitalist]}
-        when 'virtual'
-          card = {type: 'virtual', number: random_number, balance: BALANCE[:virtual]}
-        end
+      card_type = @console.read_from_console{I18n.t(CREDITE_CARD[:create_card_greeting])}
+      if VALID_TYPES.include?(card_type)
+        random_number = CARD_NUMBER.times.map { rand(10) }.join
+        data_recording (card_type)
         cards = @current_account.card << card
         @current_account.card = cards # important!!!
-        new_accounts = []
-          accounts.each do |account|
-          new_accounts.push(@current_account) if account.login == @current_account.login
-          new_accounts.push(account) unless account.login == @current_account.login
-          end
-        end
-        File.open(@file_path, 'w') { |file| file.write new_accounts.to_yaml } # Storing
+        save(new_account_exist?, @file_path)
         break
+
       else
-        puts "Wrong card type. Try again!\n"
+        @console.send_to_console{I18n.t(CONSOLE_SEND[:wrong_card])}
       end
     end
   end
 
   def destroy
-    @card.delete
+    #@card.delete # : TODO move to base Credite card class
     loop do
       if @current_account.card.any?
-        puts 'If you want to delete:'
+        @console.send_to_console{I18n.t(CONSOLE_SEND[:delete])}
         @current_account.card.each_with_index do |card, index|
-          puts "- #{card[:number]}, #{card[:type]}, press #{index + 1}"
-        end
-        puts "press `exit` to exit\n"
-        answer = gets.chomp
-        break if answer == 'exit'
-
-        if answer&.to_i.to_i <= @current_account.card.length && answer&.to_i.to_i > 0
-          puts "Are you sure you want to delete #{@current_account.card[answer&.to_i.to_i - 1][:number]}?[y/n]"
-          answer2 = gets.chomp
-          if answer2 == 'y'
-            @current_account.card.delete_at(answer&.to_i.to_i - 1)
-            new_accounts = []
-            accounts.each do |ac|
-              if account.login == @current_account.login
-                new_accounts.push(@current_account)
-              else
-                new_accounts.push(account)
+        @console.send_to_console{I18n.t(CONSOLE_SEND[:card], card_number: card[:number],
+                                            card_type:card[:type], press_index: index + 1)
+                                          end
+        destroy_choice = @console.read_from_console{I18n.t(CONSOLE_SEND[:destroy])}
+        case destroy_choice
+            when (0..@current_account.card.length).include?(destroy_choice.to_i)
+            destroy_confirm = @console.read_from_console{I18n.t(CONSOLE_SEND[:sure?], card_for_delete: @current_account.card[destroy_choice.to_i - 1][:number])}
+              if  destroy_confirm == 'y'
+                @current_account.card.delete_at(destroy_choice.to_i - 1)
+              #save(new_account_exist?, @file_path) # :TODO reason?
+                break
               end
+            when 'exit' then break
+            else
+              @console.send_to_console{I18n.t(CONSOLE_SEND[:wrong_number!])}
             end
-            File.open(@file_path, 'w') { |file| f.write new_accounts.to_yaml} # Storing
-            break
-          else
-            return
-          end
         else
-          puts "You entered wrong number!\n"
+          @console.send_to_console{I18n.t(CONSOLE_SEND[:no_active!])}
+          break
         end
-      else
-        puts "There is no active cards!\n"
-        break
       end
-    end
-  end
 
   def withdraw_money
     puts 'Choose the card for withdrawing:'

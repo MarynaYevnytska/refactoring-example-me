@@ -8,7 +8,7 @@ class Account
   attr_accessor :card, :file_path # TODO: remove if unused
   attr_reader :current_account, :name, :password, :login, :age
 
-  def initialize(file_path = 'accounts.yml')
+  def initialize(file_path = FILE_NAME)
     @errors = []
     @file_path = file_path
     @console = Console.new(self)
@@ -47,14 +47,15 @@ class Account
     CreditCard.new(type)
   end
 
+  def account_validate
+    
+  end
+
   def load
     loop do
       return create_the_first_account if accounts.none?
-
-      puts 'Enter your login'
-      login = gets.chomp
-      puts 'Enter your password'
-      password = gets.chomp
+      login = @console.read_from_console{'Enter your login'}
+      password = @console.read_from_console{'Enter your password'}
 
       if accounts.map { |account| { login: account.login, password: account.password } }.include?(login: login, password: password)
         @current_account= accounts.select { |account| login == account.login }.first
