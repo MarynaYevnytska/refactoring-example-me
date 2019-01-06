@@ -8,7 +8,13 @@ create_card_greeting:  "You could create one of 3 card types: \n
 wrong_card!: "Wrong card type. Try again!"
 wrong_number!: "You entered wrong number!"
 no_active!: "There is no active card!"
-delete?: 'If you want to delete: '
+what_to_do?: 'If you want to %{action}: '
 card: "- %{card_number}, %{card_type}, press %{press_index}"
 sure?: "Are you sure you want to delete %{card_for_delete}, [y/n]..."
-destroy: "Make the choice or press `exit` to exit"
+choice: "Make the choice or press `exit` to exit"
+withdraw_amount: 'Input the amount of money you want to withdraw'
+withdraw_god_message: " Money %{withdraw_amount} withdrawed from %{current_card}$.\n
+                        Money left: %{balance}$.\n
+                        Tax: %{withdraw_tax}$,\n"
+no_many!: "You don't have enough money on card for such operation"
+no_zero!: "You must input correct amount of $"

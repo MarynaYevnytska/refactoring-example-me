@@ -54,24 +54,27 @@ end
       end
     end
   end
+  def output_aviliable_card
+    @current_account.card.each_with_index do |card, index|
+    @console.send_to_console{I18n.t(CONSOLE_SEND[:card], card_number: card[:number],
+                                        card_type:card[:type], press_index: index + 1)
+                                  end
+  end
 
   def destroy
     #@card.delete # : TODO move to base Credite card class
     loop do
       if @current_account.card.any?
-        @console.send_to_console{I18n.t(CONSOLE_SEND[:delete])}
-        @current_account.card.each_with_index do |card, index|
-        @console.send_to_console{I18n.t(CONSOLE_SEND[:card], card_number: card[:number],
-                                            card_type:card[:type], press_index: index + 1)
-                                          end
-        destroy_choice = @console.read_from_console{I18n.t(CONSOLE_SEND[:destroy])}
+        @console.send_to_console{I18n.t(CONSOLE_SEND[:what_to_do?], action: CONSOLE_SEND[:delete])}
+        output_aviliable_card
+        destroy_choice = @console.read_from_console{I18n.t(CONSOLE_SEND[:choice])}
         case destroy_choice
             when (0..@current_account.card.length).include?(destroy_choice.to_i)
             destroy_confirm = @console.read_from_console{I18n.t(CONSOLE_SEND[:sure?], card_for_delete: @current_account.card[destroy_choice.to_i - 1][:number])}
               if  destroy_confirm == 'y'
-                @current_account.card.delete_at(destroy_choice.to_i - 1)
+              @current_account.card.delete_at(destroy_choice.to_i - 1)
               #save(new_account_exist?, @file_path) # :TODO reason?
-                break
+              break
               end
             when 'exit' then break
             else
@@ -82,53 +85,48 @@ end
           break
         end
       end
-
-  def withdraw_money
-    puts 'Choose the card for withdrawing:'
-    #answer, answer2, aanswer3 = nil # answers for gets.chomp
-    if @current_account.card.any?
-      @current_account.card.each_with_index do |card, index|
-        puts "- #{card[:number]}, #{card[:type]}, press #{index + 1}"
-      end
-      puts "press `exit` to exit\n"
-      loop do
-        answer = gets.chomp
-        break if answer == 'exit'
-        if (0..@current_account.card.length).include?(answer&.to_i)
-          current_card = @current_account.card[answer&.to_i - 1]
-          loop do
-            puts 'Input the amount of money you want to withdraw'
-            answer2 = gets.chomp
-            if answer2&.to_i > 0
-              money_left = current_card[:balance] - answer2&.to_i - withdraw_tax(current_card[:type], current_card[:balance], current_card[:number], answer2&..to_i)
-              if money_left > 0
-                current_card[:balance] = money_left
-                @current_account.card[answer&.to_i - 1] = current_card
-                new_accounts = []
-                accounts.each do |account|
-                  new_accounts.push(@current_account) if account.login == @current_account.login
-                  new_accounts.push(account) unless account.login == @current_account.login
-                  end
-                end
-                File.open(@file_path, 'w') { |file| file.write new_accounts.to_yaml } # Storing
-                puts "Money #{answer2&.to_i} withdrawed from #{current_card[:number]}$. Money left: #{current_card[:balance]}$. Tax: #{withdraw_tax(current_card[:type], current_card[:balance], current_card[:number], answer2&.to_i)}$"
-                return
-              else
-                puts "You don't have enough money on card for such operation"
-                return
-              end
-            else
-              puts 'You must input correct amount of $'
-              return
-            end
-          end
+      
+  def withdraw_money_possible?(current_card)
+    loop do
+      withdraw_amount = @console.read_from_console{I18n.t(CONSOLE_SEND[:withdraw_amount])}
+      if withdraw_amount > 0
+        tax_value = withdraw_tax(current_card[:type], current_card[:balance], current_card[:number], withdraw_amount))
+        money_left = current_card[:balance] - withdraw_amount.to_i - tax_value
+        if money_left > 0
+          current_card[:balance] = money_left
+          @current_account.card[withdraw_amount - 1] = current_card
+          #save(new_account_exist?, @file_path) # :TODO reason?
+          @console.send_to_console{I18n.t(CONSOLE_SEND[:withdraw_god_message], withdraw_amount: withdraw_amount, current_card:current_card[:number],balance: current_card[:balance], withdraw_tax:tax_value}
+          return
         else
-          puts "You entered wrong number!\n"
+          @console.send_to_console{I18n.t(CONSOLE_SEND[:no_many!])
           return
         end
+      else
+        @console.send_to_console{I18n.t(CONSOLE_SEND[:no_zero!])
+        return
+      end
+    end
+  end
+  end
+
+  def withdraw_money
+  loop do
+    if @current_account.card.any?
+      @console.send_to_console{I18n.t(CONSOLE_SEND[:what_to_do?], action: CONSOLE_SEND[:withdraw])}
+      output_aviliable_card
+      withdraw_choice = @console.read_from_console{I18n.t(CONSOLE_SEND[:choice])}
+      case  withdraw_choice
+      when 'exit'  then break
+      when (0..@current_account.card.length).include?(withdraw_choice.to_i)
+          current_card = @current_account.card[withdraw_choice.to_i - 1]
+          withdraw_money_possible?(current_card)
+      else
+        @console.send_to_console{I18n.t(CONSOLE_SEND[:wrong_number!])}
+        return
       end
     else
-      puts "There is no active cards!\n"
+      @console.send_to_console{I18n.t(CONSOLE_SEND[:no_active!])}
     end
   end
 
