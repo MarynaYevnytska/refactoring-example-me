@@ -6,20 +6,17 @@ class Console
     - If you want to exit - press `exit`
   HELLO_MESSAGE
 
-  def initialize(account)
-    @account = account
+  def initialize
+    @account = Account.new
+    hello
   end
 
   def hello
     puts HELLO_MESSAGE
-
     command = gets.chomp
-
     case command
-    when 'create'
-      @account.create
-    when 'load'
-      @account.load
+    when 'create'then @account.create
+    when 'load'  then @account.load
     else
       exit
     end
@@ -31,21 +28,15 @@ class Console
     loop do
       command = gets.chomp
       case command
-      when 'SC'
-        @account.show_cards
-      when 'CC'
-        @account.card.create
-      when 'DC'
-        @account.card.destroy
-      when 'PM'
-        @account.card.put_money
-      when 'WM'
-        @account.card.withdraw_money
-      when 'SM'
-        @account.card.send_money
+      when 'SC'then @account.show_cards
+      when 'CC'then @account.card.create
+      when 'DC'then @account.card.destroy
+      when 'PM'then @account.card.put_money
+      when 'WM'then @account.card.withdraw_money
+      when 'SM'then @account.card.send_money
       when 'DA'
-        @account.destroy
-        exit
+         @account.destroy
+         exit
       when 'exit'
         exit
       else
@@ -55,28 +46,30 @@ class Console
   end
 
   def name_input
-    puts 'Enter your name'
-    read_from_console
+    read_from_console{'Enter your name'}
   end
 
   def age_input
-    puts 'Enter your age'
-    read_from_console.to_i
+    read_from_console.to_i{'Enter your age'}
   end
 
   def login_input
     puts 'Enter your login'
-    read_from_console
+    read_from_console{'Enter your login'}
   end
 
   def password_input
-    puts 'Enter your password'
-    read_from_console
+    read_from_console{'Enter your password'}
   end
 
   private
 
+  def send_to_cosole
+    puts yield
+  end
+
   def read_from_console
+    puts yield
     gets.chomp
   end
 

@@ -14,6 +14,6 @@ class CreditCards::Base
   private
 
   def generate_card_number
-    16.times.map{ rand(10) }.join # TODO: optimize?
+    16.times.map { rand(10) }.join # TODO: optimize?
   end
 end

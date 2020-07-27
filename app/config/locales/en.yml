@@ -1,0 +1,20 @@
+en:
+
+create_card_greeting:  "You could create one of 3 card types: \n
+    - Usual card. 2% tax on card INCOME. 20$ tax on SENDING money from this card. 5% tax on WITHDRAWING money. For creation this card - press `usual`\n
+    - Capitalist card. 10$ tax on card INCOME. 10% tax on SENDING money from this card. 4$ tax on WITHDRAWING money. For creation this card - press `capitalist`\n
+    - Virtual card. 1$ tax on card INCOME. 1$ tax on SENDING money from this card. 12% tax on WITHDRAWING money. For creation this card - press `virtual`\n
+    - For exit - press `exit`\n"
+wrong_card!: "Wrong card type. Try again!"
+wrong_number!: "You entered wrong number!"
+no_active!: "There is no active card!"
+what_to_do?: 'If you want to %{action}: '
+card: "- %{card_number}, %{card_type}, press %{press_index}"
+sure?: "Are you sure you want to delete %{card_for_delete}, [y/n]..."
+choice: "Make the choice or press `exit` to exit"
+withdraw_amount: 'Input the amount of money you want to withdraw'
+withdraw_god_message: " Money %{withdraw_amount} withdrawed from %{current_card}$.\n
+                        Money left: %{balance}$.\n
+                        Tax: %{withdraw_tax}$,\n"
+no_many!: "You don't have enough money on card for such operation"
+no_zero!: "You must input correct amount of $"
